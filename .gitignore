@@ -1,0 +1,34 @@
+**/bin/
+**/obj/
+.vs/
+.vscode/
+*.db
+*.db-shm
+*.db-wal
+*.bak
+Program.sqlite-backup.txt
+appsettings.Development.json
+
+zapas/
+Program.sqlite-backup.txt
+
+# Local databases and backups
+*.db
+*.sqlite
+*.sqlite3
+*.db-shm
+*.db-wal
+*.bak
+
+# Local configuration
+**/appsettings.Development.json
+
+# Build output
+**/bin/
+**/obj/
+
+# Backup folders and files
+zapas/
+Program.sqlite-backup.txt
+
+база если забыл где она.txt

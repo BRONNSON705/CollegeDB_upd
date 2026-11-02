@@ -1,0 +1,1139 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CollegeDB — Управление колледжем</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0c1018;
+        --panel: #151c29;
+        --line: #293449;
+        --text: #edf2fa;
+        --muted: #8b9ab1;
+        --accent: #6c8cff;
+        --green: #55d6a0;
+        --red: #ff7185;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font:
+          14px "Segoe UI",
+          Arial,
+          sans-serif;
+      }
+      button,
+      input,
+      select {
+        font: inherit;
+      }
+      button {
+        cursor: pointer;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 10px 14px;
+        background: #202b3d;
+        color: var(--text);
+      }
+      button:hover {
+        border-color: var(--accent);
+      }
+      button.primary {
+        background: var(--accent);
+        color: white;
+        border-color: transparent;
+      }
+      button.danger {
+        color: var(--red);
+      }
+      header {
+        min-height: 72px;
+        padding: 0 5%;
+        border-bottom: 1px solid var(--line);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      .logo {
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: var(--accent);
+        font-weight: 800;
+        font-size: 19px;
+      }
+      .brand strong {
+        font-size: 18px;
+      }
+      .brand small {
+        display: block;
+        color: var(--muted);
+        margin-top: 3px;
+      }
+      main {
+        max-width: 1250px;
+        margin: auto;
+        padding: 32px 24px;
+      }
+      .eyebrow {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      h1 {
+        margin: 9px 0;
+        font-size: clamp(26px, 4vw, 36px);
+      }
+      .subtitle {
+        color: var(--muted);
+        margin-bottom: 28px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .card,
+      .workspace {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 15px;
+      }
+      .card {
+        padding: 20px;
+      }
+      .card span {
+        color: var(--muted);
+      }
+      .card strong {
+        display: block;
+        font-size: 30px;
+        margin-top: 12px;
+      }
+      .workspace {
+        padding: 22px;
+      }
+      .toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 20px;
+      }
+      .toolbar h2 {
+        margin: 0;
+        font-size: 19px;
+      }
+      .actions {
+        display: flex;
+        gap: 9px;
+        flex-wrap: wrap;
+      }
+      input,
+      select {
+        background: #0e1420;
+        border: 1px solid var(--line);
+        border-radius: 9px;
+        padding: 11px 12px;
+        color: var(--text);
+        min-width: 0;
+      }
+      input:focus,
+      select:focus {
+        outline: 1px solid var(--accent);
+      }
+      #search {
+        width: min(100%, 310px);
+      }
+      .table-wrap {
+        overflow-x: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+      }
+      th {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.7px;
+        color: var(--muted);
+        font-weight: 600;
+      }
+      th,
+      td {
+        padding: 15px 12px;
+        border-bottom: 1px solid var(--line);
+      }
+      td {
+        white-space: nowrap;
+      }
+      tbody tr:hover {
+        background: #ffffff05;
+      }
+      .avatar {
+        display: inline-grid;
+        place-items: center;
+        width: 34px;
+        height: 34px;
+        border-radius: 10px;
+        background: #293654;
+        color: #aebfff;
+        font-weight: 700;
+        margin-right: 10px;
+      }
+      .person {
+        display: flex;
+        align-items: center;
+      }
+      .pill {
+        display: inline-block;
+        padding: 5px 9px;
+        border-radius: 7px;
+        background: #25342f;
+        color: var(--green);
+        font-size: 12px;
+      }
+      .row-actions {
+        display: flex;
+        gap: 6px;
+      }
+      .row-actions button {
+        padding: 7px 9px;
+      }
+      #message {
+        color: var(--muted);
+        margin-top: 14px;
+        min-height: 20px;
+      }
+      #message.error {
+        color: var(--red);
+      }
+      #message.success {
+        color: var(--green);
+      }
+      .empty {
+        text-align: center;
+        color: var(--muted);
+        padding: 35px;
+      }
+      dialog {
+        background: var(--panel);
+        color: var(--text);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        width: min(440px, calc(100% - 28px));
+        padding: 25px;
+      }
+      dialog::backdrop {
+        background: #000b;
+        backdrop-filter: blur(4px);
+      }
+      dialog h2 {
+        margin-top: 0;
+      }
+      .form {
+        display: grid;
+        gap: 15px;
+      }
+      .form label {
+        display: grid;
+        gap: 7px;
+        color: var(--muted);
+      }
+      .form input,
+      .form select {
+        width: 100%;
+      }
+      .form-actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 9px;
+        margin-top: 5px;
+      }
+      footer {
+        text-align: center;
+        color: var(--muted);
+        padding: 28px 10px;
+      }
+      @media (max-width: 650px) {
+        header {
+          padding: 0 16px;
+        }
+        main {
+          padding: 24px 14px;
+        }
+        .stats {
+          gap: 8px;
+        }
+        .card {
+          padding: 13px;
+        }
+        .card strong {
+          font-size: 23px;
+        }
+        .workspace {
+          padding: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="brand">
+        <div class="logo">C</div>
+        <div>
+          <strong>CollegeDB</strong><small>Система управления колледжем</small>
+        </div>
+      </div>
+      <span class="pill">● Учебная система</span>
+    </header>
+
+    <main>
+      <div class="eyebrow">Панель управления / Dashboard</div>
+      <h1>Студенты и учебные группы</h1>
+      <div class="subtitle">Управление данными колледжа в одном месте.</div>
+
+      <section class="stats">
+        <div class="card">
+          <span>Всего студентов</span><strong id="studentCount">—</strong>
+        </div>
+        <div class="card">
+          <span>Учебных групп</span><strong id="groupCount">—</strong>
+        </div>
+        <div class="card">
+          <span>Состояние API</span
+          ><strong id="apiStatus" style="font-size: 19px">Проверка...</strong>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <div class="toolbar">
+          <h2>Список студентов</h2>
+          <div class="actions">
+            <input
+              id="search"
+              placeholder="Поиск по ФИО, email или группе..."
+            />
+
+            <select id="groupFilter" aria-label="Фильтр по группе">
+              <option value="">Все группы</option>
+            </select>
+
+            <select id="sortBy" aria-label="Сортировка студентов">
+              <option value="name">По ФИО</option>
+              <option value="email">По email</option>
+              <option value="group">По группе</option>
+              <option value="age">По возрасту</option>
+            </select>
+
+            <button onclick="refresh()">↻ Обновить</button>
+            <button onclick="exportCsv()">Экспорт CSV</button>
+            <button class="primary" onclick="openStudent()">
+              + Добавить студента
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Студент</th>
+                <th>Email</th>
+                <th>Группа</th>
+                <th>Возраст</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="studentsBody">
+              <tr>
+                <td colspan="5" class="empty">Загрузка данных...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="message" role="status"></div>
+      </section>
+
+      <section class="workspace" style="margin-top: 20px">
+        <div class="toolbar">
+          <h2>Учебные группы</h2>
+          <button class="primary" onclick="openGroup()">
+            + Добавить группу
+          </button>
+        </div>
+        <div id="groupsList" class="actions"></div>
+      </section>
+
+      <section class="workspace" style="margin-top: 20px">
+        <div class="toolbar">
+          <h2>Учителя</h2>
+          <div class="actions">
+            <button onclick="loadTeachers()">↻ Обновить</button
+            ><button class="primary" onclick="editTeacher()">+ Учитель</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ФИО</th>
+                <th>Email</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="teachersBody"></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="workspace" style="margin-top: 20px">
+        <div class="toolbar">
+          <h2>Предметы</h2>
+          <div class="actions">
+            <button onclick="loadSubjects()">↻ Обновить</button
+            ><button class="primary" onclick="editSubject()">+ Предмет</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Название</th>
+                <th>Учитель</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="subjectsBody"></tbody>
+          </table>
+        </div>
+      </section>
+      <section class="workspace" style="margin-top: 20px">
+        <div class="toolbar">
+          <h2>Оценки</h2>
+          <div class="actions">
+            <button onclick="loadGrades()">↻ Обновить</button
+            ><button class="primary" onclick="editGrade()">+ Оценка</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Студент</th>
+                <th>Предмет</th>
+                <th>Оценка</th>
+                <th>Дата</th>
+                <th>Комментарий</th>
+                <th>Действия</th>
+              </tr>
+            </thead>
+            <tbody id="gradesBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer>CollegeDB · Учебный проект на ASP.NET Core и SQL Server</footer>
+
+    <dialog id="studentDialog">
+      <h2 id="studentTitle">Новый студент</h2>
+      <form class="form" id="studentForm">
+        <label
+          >ФИО
+          <input id="fullName" maxlength="100" required />
+        </label>
+
+        <label
+          >Электронная почта
+          <input id="email" type="email" maxlength="100" required />
+        </label>
+
+        <label
+          >Дата рождения
+          <input id="birthDate" type="date" />
+        </label>
+
+        <label
+          >Учебная группа
+          <select id="groupId">
+            <option value="">Без группы</option>
+          </select>
+        </label>
+
+        <div class="form-actions">
+          <button type="button" onclick="studentDialog.close()">Отмена</button>
+          <button class="primary" type="submit">Сохранить</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="groupDialog">
+      <h2>Новая учебная группа</h2>
+      <form class="form" id="groupForm">
+        <label
+          >Название группы
+          <input
+            id="groupName"
+            maxlength="50"
+            required
+            placeholder="Например, ИС-31"
+          />
+        </label>
+        <div class="form-actions">
+          <button type="button" onclick="groupDialog.close()">Отмена</button>
+          <button class="primary" type="submit">Создать</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="teacherDialog">
+      <h2 id="teacherTitle">Учитель</h2>
+      <form class="form" id="teacherForm">
+        <label>ФИО<input id="teacherName" maxlength="100" required /></label
+        ><label
+          >Email<input id="teacherEmail" type="email" maxlength="100" required
+        /></label>
+        <div class="form-actions">
+          <button type="button" onclick="teacherDialog.close()">Отмена</button
+          ><button class="primary">Сохранить</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="subjectDialog">
+      <h2>Предмет</h2>
+      <form class="form" id="subjectForm">
+        <label
+          >Название<input id="subjectName" maxlength="100" required /></label
+        ><label>Учитель<select id="subjectTeacher" required></select></label>
+        <div class="form-actions">
+          <button type="button" onclick="subjectDialog.close()">Отмена</button
+          ><button class="primary">Сохранить</button>
+        </div>
+      </form>
+    </dialog>
+    <dialog id="gradeDialog">
+      <h2>Оценка</h2>
+      <form class="form" id="gradeForm">
+        <label>Студент<select id="gradeStudent" required></select></label
+        ><label>Предмет<select id="gradeSubject" required></select></label>
+        <label
+          >Оценка<select id="gradeValue">
+            <option>5</option>
+            <option>4</option>
+            <option>3</option>
+            <option>2</option>
+            <option>1</option>
+          </select></label
+        >
+        <label>Дата<input id="gradeDate" type="date" required /></label
+        ><label>Комментарий<input id="gradeComment" maxlength="300" /></label>
+        <div class="form-actions">
+          <button type="button" onclick="gradeDialog.close()">Отмена</button
+          ><button class="primary">Сохранить</button>
+        </div>
+      </form>
+    </dialog>
+    <script>
+      const $ = (id) => document.getElementById(id);
+
+      let students = [];
+      let groups = [];
+      let editingId = null;
+
+      async function request(url, options = {}) {
+        const response = await fetch(url, {
+          ...options,
+          headers: {
+            "Content-Type": "application/json",
+            ...options.headers,
+          },
+        });
+
+        if (!response.ok) {
+          const text = await response.text();
+          throw new Error(text || `Ошибка HTTP ${response.status}`);
+        }
+
+        if (response.status === 204) return null;
+        return response.json();
+      }
+
+      function notify(text, error = false) {
+        $("message").textContent = text;
+        $("message").className = error ? "error" : "success";
+      }
+
+      function calculateAge(birthDate) {
+        if (!birthDate) return null;
+
+        const birth = new Date(birthDate + "T00:00:00");
+        if (Number.isNaN(birth.getTime())) return null;
+
+        const today = new Date();
+        let age = today.getFullYear() - birth.getFullYear();
+
+        const birthdayNotReached =
+          today.getMonth() < birth.getMonth() ||
+          (today.getMonth() === birth.getMonth() &&
+            today.getDate() < birth.getDate());
+
+        if (birthdayNotReached) age--;
+
+        return age;
+      }
+
+      function ageText(age) {
+        if (age === null || age === undefined) return "—";
+
+        const lastTwo = age % 100;
+        const last = age % 10;
+
+        if (lastTwo >= 11 && lastTwo <= 14) return `${age} лет`;
+        if (last === 1) return `${age} год`;
+        if (last >= 2 && last <= 4) return `${age} года`;
+
+        return `${age} лет`;
+      }
+
+      async function refresh() {
+        try {
+          const [s, g] = await Promise.all([
+            request("/api/students"),
+            request("/api/groups"),
+          ]);
+
+          students = s;
+          groups = g;
+
+          $("apiStatus").textContent = "● Онлайн";
+          $("apiStatus").style.color = "var(--green)";
+
+          $("studentCount").textContent = students.length;
+          $("groupCount").textContent = groups.length;
+
+          renderStudents();
+          renderGroups();
+          fillGroupOptions();
+        } catch (e) {
+          $("apiStatus").textContent = "● Ошибка";
+          $("apiStatus").style.color = "var(--red)";
+          notify("Не удалось загрузить данные: " + e.message, true);
+        }
+      }
+
+      function renderStudents() {
+        const q = $("search").value.trim().toLowerCase();
+        const selectedGroup = $("groupFilter").value;
+        const sortBy = $("sortBy").value;
+
+        const list = students.filter((s) => {
+          const groupName = (s.groupName || "").toLowerCase();
+
+          const matchesSearch =
+            (s.fullName || "").toLowerCase().includes(q) ||
+            (s.email || "").toLowerCase().includes(q) ||
+            groupName.includes(q);
+
+          const matchesGroup = !selectedGroup || s.groupName === selectedGroup;
+
+          return matchesSearch && matchesGroup;
+        });
+
+        list.sort((a, b) => {
+          if (sortBy === "email")
+            return (a.email || "").localeCompare(b.email || "");
+
+          if (sortBy === "group")
+            return (a.groupName || "").localeCompare(b.groupName || "");
+
+          if (sortBy === "age") {
+            const ageA = a.age ?? calculateAge(a.birthDate);
+            const ageB = b.age ?? calculateAge(b.birthDate);
+
+            if (ageA === null) return 1;
+            if (ageB === null) return -1;
+            return ageA - ageB;
+          }
+
+          return (a.fullName || "").localeCompare(b.fullName || "", "ru");
+        });
+
+        $("studentsBody").replaceChildren();
+
+        if (!list.length) {
+          $("studentsBody").innerHTML =
+            '<tr><td colspan="5" class="empty">Студенты не найдены</td></tr>';
+          return;
+        }
+
+        list.forEach((s) => {
+          const tr = document.createElement("tr");
+
+          const person = document.createElement("div");
+          person.className = "person";
+
+          const avatar = document.createElement("span");
+          avatar.className = "avatar";
+          avatar.textContent = (s.fullName || "?")
+            .trim()
+            .charAt(0)
+            .toUpperCase();
+
+          const name = document.createElement("span");
+          name.textContent = s.fullName;
+
+          person.append(avatar, name);
+
+          const tdPerson = document.createElement("td");
+          tdPerson.append(person);
+
+          const tdEmail = document.createElement("td");
+          tdEmail.textContent = s.email;
+
+          const tdGroup = document.createElement("td");
+          tdGroup.textContent = s.groupName || "—";
+
+          const tdAge = document.createElement("td");
+          const age = s.age ?? calculateAge(s.birthDate);
+          tdAge.textContent = ageText(age);
+
+          const tdActions = document.createElement("td");
+          const actions = document.createElement("div");
+          actions.className = "row-actions";
+
+          const edit = document.createElement("button");
+          edit.textContent = "Изменить";
+          edit.onclick = () => openStudent(s.id);
+
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Удалить";
+          del.onclick = () => deleteStudent(s.id, s.fullName);
+
+          actions.append(edit, del);
+          tdActions.append(actions);
+
+          tr.append(tdPerson, tdEmail, tdGroup, tdAge, tdActions);
+          $("studentsBody").append(tr);
+        });
+      }
+
+      function renderGroups() {
+        const root = $("groupsList");
+        root.replaceChildren();
+
+        if (!groups.length) {
+          root.textContent = "Групп пока нет.";
+          return;
+        }
+
+        groups.forEach((g) => {
+          const item = document.createElement("div");
+          item.className = "card";
+          item.style.padding = "12px 15px";
+
+          const title = document.createElement("strong");
+          title.style.fontSize = "15px";
+          title.textContent = g.name;
+
+          const count = document.createElement("span");
+          count.style.display = "block";
+          count.style.margin = "7px 0";
+          count.textContent = `Студентов: ${g.studentCount}`;
+
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Удалить группу";
+          del.onclick = () => deleteGroup(g.id, g.name);
+
+          item.append(title, count, del);
+          root.append(item);
+        });
+      }
+
+      function fillGroupOptions(selected = "") {
+        const select = $("groupId");
+        select.replaceChildren(new Option("Без группы", ""));
+
+        groups.forEach((g) => {
+          select.add(new Option(g.name, g.id));
+        });
+
+        select.value = selected == null ? "" : String(selected);
+
+        const filter = $("groupFilter");
+        const previous = filter.value;
+
+        filter.replaceChildren(new Option("Все группы", ""));
+
+        groups.forEach((g) => {
+          filter.add(new Option(g.name, g.name));
+        });
+
+        filter.value = groups.some((g) => g.name === previous) ? previous : "";
+      }
+
+      function openStudent(id = null) {
+        editingId = id;
+        const s = students.find((x) => x.id === id);
+
+        $("studentTitle").textContent = s
+          ? "Редактировать студента"
+          : "Новый студент";
+
+        $("fullName").value = s?.fullName || "";
+        $("email").value = s?.email || "";
+        $("birthDate").value = s?.birthDate
+          ? String(s.birthDate).substring(0, 10)
+          : "";
+
+        fillGroupOptions(s?.groupId);
+
+        $("studentDialog").showModal();
+      }
+
+      function openGroup() {
+        $("groupName").value = "";
+        $("groupDialog").showModal();
+      }
+
+      $("studentForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const body = {
+          fullName: $("fullName").value.trim(),
+          email: $("email").value.trim(),
+          groupId: $("groupId").value ? Number($("groupId").value) : null,
+          birthDate: $("birthDate").value || null,
+        };
+
+        try {
+          await request(
+            editingId ? `/api/students/${editingId}` : "/api/students",
+            {
+              method: editingId ? "PUT" : "POST",
+              body: JSON.stringify(body),
+            },
+          );
+
+          $("studentDialog").close();
+
+          notify(
+            editingId ? "Данные студента обновлены." : "Студент добавлен.",
+          );
+
+          await refresh();
+        } catch (e) {
+          notify("Не удалось сохранить: " + e.message, true);
+        }
+      });
+
+      $("groupForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        try {
+          await request("/api/groups", {
+            method: "POST",
+            body: JSON.stringify({
+              name: $("groupName").value.trim(),
+            }),
+          });
+
+          $("groupDialog").close();
+          notify("Группа создана.");
+          await refresh();
+        } catch (e) {
+          notify("Не удалось создать группу: " + e.message, true);
+        }
+      });
+
+      async function deleteStudent(id, name) {
+        if (!confirm(`Удалить студента «${name}»?`)) return;
+
+        try {
+          await request(`/api/students/${id}`, { method: "DELETE" });
+          notify("Студент удалён.");
+          await refresh();
+        } catch (e) {
+          notify("Не удалось удалить: " + e.message, true);
+        }
+      }
+
+      async function deleteGroup(id, name) {
+        if (!confirm(`Удалить группу «${name}»?`)) return;
+
+        try {
+          await request(`/api/groups/${id}`, { method: "DELETE" });
+          notify("Группа удалена.");
+          await refresh();
+        } catch (e) {
+          notify("Не удалось удалить: " + e.message, true);
+        }
+      }
+
+      function exportCsv() {
+        const headers = ["ФИО", "Email", "Группа", "Дата рождения", "Возраст"];
+
+        const rows = students.map((s) => [
+          s.fullName,
+          s.email,
+          s.groupName || "",
+          s.birthDate || "",
+          s.age ?? calculateAge(s.birthDate) ?? "",
+        ]);
+
+        const escapeCsv = (value) =>
+          `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+        const csv =
+          "\uFEFF" +
+          [headers, ...rows]
+            .map((row) => row.map(escapeCsv).join(";"))
+            .join("\r\n");
+
+        const blob = new Blob([csv], {
+          type: "text/csv;charset=utf-8;",
+        });
+
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+
+        link.href = url;
+        link.download = "CollegeDB_Students.csv";
+        link.click();
+
+        URL.revokeObjectURL(url);
+      }
+
+      $("search").addEventListener("input", renderStudents);
+      $("groupFilter").addEventListener("change", renderStudents);
+      $("sortBy").addEventListener("change", renderStudents);
+
+      refresh();
+
+      let teachers = [],
+        subjects = [],
+        grades = [],
+        editTeacherId = null,
+        editSubjectId = null,
+        editGradeId = null;
+      async function loadTeachers() {
+        teachers = await request("/api/teachers");
+        const body = $("teachersBody");
+        body.replaceChildren();
+        teachers.forEach((t) => {
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td></td><td></td><td></td>`;
+          tr.cells[0].textContent = t.fullName;
+          tr.cells[1].textContent = t.email;
+          const b = document.createElement("button");
+          b.textContent = "Изменить";
+          b.onclick = () => editTeacher(t.id);
+          const d = document.createElement("button");
+          d.className = "danger";
+          d.textContent = "Удалить";
+          d.onclick = () => removeEntity("teachers", t.id, loadTeachers);
+          tr.cells[2].append(b, d);
+          body.append(tr);
+        });
+        fillTeacherOptions();
+        await loadSubjects();
+      }
+      function fillTeacherOptions() {
+        const s = $("subjectTeacher");
+        s.replaceChildren();
+        teachers.forEach((t) => s.add(new Option(t.fullName, t.id)));
+      }
+      function editTeacher(id = null) {
+        editTeacherId = id;
+        const t = teachers.find((x) => x.id === id);
+        $("teacherName").value = t?.fullName || "";
+        $("teacherEmail").value = t?.email || "";
+        $("teacherDialog").showModal();
+      }
+      $("teacherForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await request(
+            editTeacherId ? `/api/teachers/${editTeacherId}` : "/api/teachers",
+            {
+              method: editTeacherId ? "PUT" : "POST",
+              body: JSON.stringify({
+                fullName: $("teacherName").value,
+                email: $("teacherEmail").value,
+              }),
+            },
+          );
+          $("teacherDialog").close();
+          await loadTeachers();
+          notify("Учитель сохранён.");
+        } catch (err) {
+          notify(err.message, true);
+        }
+      });
+      async function loadSubjects() {
+        subjects = await request("/api/subjects");
+        const body = $("subjectsBody");
+        body.replaceChildren();
+        subjects.forEach((s) => {
+          const tr = document.createElement("tr");
+          const a = document.createElement("td"),
+            b = document.createElement("td"),
+            c = document.createElement("td");
+          a.textContent = s.name;
+          b.textContent = s.teacherName;
+          const edit = document.createElement("button");
+          edit.textContent = "Изменить";
+          edit.onclick = () => editSubject(s.id);
+          const del = document.createElement("button");
+          del.className = "danger";
+          del.textContent = "Удалить";
+          del.onclick = () => removeEntity("subjects", s.id, loadSubjects);
+          c.append(edit, del);
+          tr.append(a, b, c);
+          body.append(tr);
+        });
+        fillSubjectOptions();
+        await loadGrades();
+      }
+      function fillSubjectOptions() {
+        const s = $("gradeSubject");
+        s.replaceChildren();
+        subjects.forEach((x) => s.add(new Option(x.name, x.id)));
+      }
+      function editSubject(id = null) {
+        editSubjectId = id;
+        const s = subjects.find((x) => x.id === id);
+        $("subjectName").value = s?.name || "";
+        fillTeacherOptions();
+        $("subjectTeacher").value = s?.teacherId || teachers[0]?.id || "";
+        $("subjectDialog").showModal();
+      }
+      $("subjectForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await request(
+            editSubjectId ? `/api/subjects/${editSubjectId}` : "/api/subjects",
+            {
+              method: editSubjectId ? "PUT" : "POST",
+              body: JSON.stringify({
+                name: $("subjectName").value,
+                teacherId: Number($("subjectTeacher").value),
+              }),
+            },
+          );
+          $("subjectDialog").close();
+          await loadSubjects();
+          notify("Предмет сохранён.");
+        } catch (err) {
+          notify(err.message, true);
+        }
+      });
+      async function loadGrades() {
+        grades = await request("/api/grades");
+        const body = $("gradesBody");
+        body.replaceChildren();
+        grades.forEach((g) => {
+          const tr = document.createElement("tr");
+          [
+            g.studentName,
+            g.subjectName,
+            g.value,
+            String(g.gradeDate).substring(0, 10),
+            g.comment || "",
+          ].forEach((v) => {
+            const td = document.createElement("td");
+            td.textContent = v;
+            tr.append(td);
+          });
+          const td = document.createElement("td"),
+            ed = document.createElement("button"),
+            del = document.createElement("button");
+          ed.textContent = "Изменить";
+          ed.onclick = () => editGrade(g.id);
+          del.textContent = "Удалить";
+          del.className = "danger";
+          del.onclick = () => removeEntity("grades", g.id, loadGrades);
+          td.append(ed, del);
+          tr.append(td);
+          body.append(tr);
+        });
+      }
+      async function editGrade(id = null) {
+        editGradeId = id;
+        const g = grades.find((x) => x.id === id);
+        const ss = await request("/api/students");
+        const sub = await request("/api/subjects");
+        $("gradeStudent").replaceChildren();
+        ss.forEach((x) => $("gradeStudent").add(new Option(x.fullName, x.id)));
+        $("gradeSubject").replaceChildren();
+        sub.forEach((x) => $("gradeSubject").add(new Option(x.name, x.id)));
+        $("gradeValue").value = g?.value || 5;
+        $("gradeDate").value = g
+          ? String(g.gradeDate).substring(0, 10)
+          : new Date().toISOString().substring(0, 10);
+        $("gradeComment").value = g?.comment || "";
+        if (g) {
+          $("gradeStudent").value = g.studentId;
+          $("gradeSubject").value = g.subjectId;
+        }
+        $("gradeDialog").showModal();
+      }
+      $("gradeForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        try {
+          await request(
+            editGradeId ? `/api/grades/${editGradeId}` : "/api/grades",
+            {
+              method: editGradeId ? "PUT" : "POST",
+              body: JSON.stringify({
+                studentId: Number($("gradeStudent").value),
+                subjectId: Number($("gradeSubject").value),
+                value: Number($("gradeValue").value),
+                gradeDate: $("gradeDate").value,
+                comment: $("gradeComment").value,
+              }),
+            },
+          );
+          $("gradeDialog").close();
+          await loadGrades();
+          notify("Оценка сохранена.");
+        } catch (err) {
+          notify(err.message, true);
+        }
+      });
+      async function removeEntity(kind, id, reload) {
+        if (!confirm("Удалить запись?")) return;
+        try {
+          await request(`/api/${kind}/${id}`, { method: "DELETE" });
+          await reload();
+          notify("Запись удалена.");
+        } catch (e) {
+          notify(e.message, true);
+        }
+      }
+      loadTeachers().catch((e) =>
+        notify("Не удалось загрузить преподавателей: " + e.message, true),
+      );
+    </script>
+  </body>
+</html>
